@@ -149,11 +149,11 @@ zigbee:
         - attribute_id: 0x0 # https://github.com/espressif/esp-zigbee-sdk/blob/929038a/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_occupancy_sensing.h
           id: z_any_presence
           type: u8 # map8
-          # device: any_presence
+          device: any_presence
           report: true
           value: 0 # 0 = Unoccupied, 1 = Occupied
           lambda: |-
-            return (x - id(any_presence).state) ? 1 : 0;
+            return x ? 1 : 0;
         - attribute_id: 0x1 # https://github.com/espressif/esp-zigbee-sdk/blob/929038a/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_occupancy_sensing.h
           id: z_any_presence_type
           type: u8 # enum8
