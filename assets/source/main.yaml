@@ -36,11 +36,21 @@ external_components:
       path: components
 
 esp32:
-  board: esp32-c3-devkitm-1
+  board: esp32-c6-devkitc-1
   framework:
     type: esp-idf
     sdkconfig_options:
       CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE: n
+      CONFIG_ESP_ZB_ENABLED: y
+
+zigbee:
+  role: end_device
+  endpoint: 1
+  manufacturer: "Sensy-One"
+  model: "S1 Pro Multi Sense"
+  application_version: 0x010107
+  stack_version: 0x02
+  hardware_version: 0x01
 
 wifi:
   ap:
@@ -1757,6 +1767,7 @@ binary_sensor:
 
   - platform: template
     name: "Any Presence"
+    id: any_presence
     icon: mdi:home-account
     device_class: presence
     lambda: |-
@@ -1770,6 +1781,21 @@ binary_sensor:
         return true;
       }
       return (now - last_off) < (unsigned long)(id(presence_delay).state * 1000.0);
+
+  - platform: template
+    name: "Any Presence Motion"
+    id: any_presence_motion
+    icon: mdi:motion-sensor
+    device_class: motion
+    lambda: |-
+      if (!id(any_presence).has_state()) {
+        return false;
+      }
+      return id(any_presence).state;
+    zigbee:
+      endpoint: 1
+      cluster: 0x0406
+      attribute: 0x0000
 
   - platform: template
     name: "Any Movement"
